@@ -149,3 +149,58 @@ curl -X POST http://127.0.0.1:10000/build \
     }
   }'
 ```
+
+## ClawCloud deployment
+
+Recommended path:
+
+1. Build and publish a Docker image to GHCR
+2. Deploy that image in ClawCloud Run App Launchpad
+
+### Local Docker build
+
+```bash
+docker build -t openai-sentinel-go:local .
+docker run --rm -p 10000:10000 -e API_BEARER_TOKEN=your-token openai-sentinel-go:local
+```
+
+### GHCR publishing
+
+This repository includes a GitHub Actions workflow:
+
+- `.github/workflows/docker-ghcr.yml`
+
+It publishes:
+
+- `ghcr.io/aonmcd27/openai-sentinel-go:latest`
+- `ghcr.io/aonmcd27/openai-sentinel-go:sha-...`
+
+After pushing to `main`, go to the package page and make the package public if needed.
+
+### ClawCloud Run settings
+
+In App Launchpad, use:
+
+- **Application Name**: `openai-sentinel-go`
+- **Image Type**: `Public`
+- **Image Name**: `ghcr.io/aonmcd27/openai-sentinel-go:latest`
+- **Container Port**: `10000`
+- **Public Access**: enabled
+
+Environment variables:
+
+- `API_BEARER_TOKEN` = your random secret
+- `PORT` = `10000`
+- `LISTEN_ADDR` = `0.0.0.0`
+- `SENTINEL_BASE_URL` = `https://sentinel.openai.com`
+- `SENTINEL_TIMEOUT_MS` = `10000`
+- `SENTINEL_MAX_ATTEMPTS` = `2`
+- `SENTINEL_DIRECT_FALLBACK` = `false`
+
+### ClawCloud health check
+
+After deployment, verify:
+
+```bash
+curl https://your-app-domain/healthz
+```

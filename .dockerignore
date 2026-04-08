@@ -1,0 +1,9 @@
+.git
+.github
+docs
+*.exe
+*.test
+coverage.out
+coverage.html
+app
+
