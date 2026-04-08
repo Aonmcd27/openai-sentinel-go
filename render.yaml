@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: openai-sentinel-go
+    runtime: go
+    plan: free
+    buildCommand: go build -tags netgo -ldflags '-s -w' -o app ./cmd/render-api
+    startCommand: ./app
+    autoDeploy: true
+    envVars:
+      - key: API_BEARER_TOKEN
+        generateValue: true
+      - key: CLIENT_TIMEOUT_MS
+        value: "10000"
+      - key: SENTINEL_BASE_URL
+        value: "https://sentinel.openai.com"
+      - key: SENTINEL_TIMEOUT_MS
+        value: "10000"
+      - key: SENTINEL_MAX_ATTEMPTS
+        value: "2"
+      - key: SENTINEL_DIRECT_FALLBACK
+        value: "false"
